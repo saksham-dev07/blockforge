@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BlockForge Settings</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="settings-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <defs>
+              <linearGradient id="shield-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#10b981"/>
+                <stop offset="100%" style="stop-color:#059669"/>
+              </linearGradient>
+            </defs>
+            <path d="M16 2L4 7V14.5C4 21.5 9 27.5 16 30C23 27.5 28 21.5 28 14.5V7L16 2Z" fill="url(#shield-gradient)"/>
+            <path d="M14 16L12 14L10.5 15.5L14 19L22 11L20.5 9.5L14 16Z" fill="white"/>
+          </svg>
+          <span class="logo-text">ShieldGuard</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="#general" class="nav-item active" data-section="general">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text">General</span>
+        </a>
+        <a href="#blocking" class="nav-item" data-section="blocking">
+          <span class="nav-icon">🛡️</span>
+          <span class="nav-text">Blocking</span>
+        </a>
+        <a href="#privacy" class="nav-item" data-section="privacy">
+          <span class="nav-icon">🔒</span>
+          <span class="nav-text">Privacy</span>
+        </a>
+        <a href="#filters" class="nav-item" data-section="filters">
+          <span class="nav-icon">📋</span>
+          <span class="nav-text">Filter Lists</span>
+        </a>
+        <a href="#whitelist" class="nav-item" data-section="whitelist">
+          <span class="nav-icon">✅</span>
+          <span class="nav-text">Whitelist</span>
+        </a>
+        <a href="#blacklist" class="nav-item" data-section="blacklist">
+          <span class="nav-icon">🚫</span>
+          <span class="nav-text">Blacklist</span>
+        </a>
+        <a href="#custom-rules" class="nav-item" data-section="custom-rules">
+          <span class="nav-icon">✏️</span>
+          <span class="nav-text">Custom Rules</span>
+        </a>
+        <a href="#advanced" class="nav-item" data-section="advanced">
+          <span class="nav-icon">🔧</span>
+          <span class="nav-text">Advanced</span>
+        </a>
+        <a href="#about" class="nav-item" data-section="about">
+          <span class="nav-icon">ℹ️</span>
+          <span class="nav-text">About</span>
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <button class="btn-export" id="exportBtn">
+          <span>📤</span> Export Settings
+        </button>
+        <button class="btn-import" id="importBtn">
+          <span>📥</span> Import Settings
+        </button>
+        <input type="file" id="importFile" accept=".json" hidden>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- General Section -->
+      <section id="general" class="settings-section active">
+        <h1 class="section-title">General Settings</h1>
+        <p class="section-description">Configure basic extension behavior</p>
+        
+        <div class="settings-group">
+          <h2 class="group-title">Protection</h2>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Enable Protection</h3>
+              <p class="setting-description">Master switch for all protection features</p>
+            </div>
+            <label class="toggle-switch" for="settingEnabled"><input type="checkbox" id="settingEnabled" title="Toggle setting" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Show Badge Count</h3>
+              <p class="setting-description">Display blocked count on extension icon</p>
+            </div>
+            <label class="toggle-switch" for="settingBadge"><input type="checkbox" id="settingBadge" title="Toggle setting" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Notifications</h3>
+              <p class="setting-description">Show notifications for high-threat detections</p>
+            </div>
+            <label class="toggle-switch" for="settingNotifications"><input type="checkbox" id="settingNotifications" title="Toggle setting">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="settings-group">
+          <h2 class="group-title">Appearance</h2>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Theme</h3>
+              <p class="setting-description">Choose your preferred color theme</p>
+            </div>
+            <select id="settingTheme" class="select-input" title="Select option">
+              <option value="auto">Auto (System)</option>
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Blocking Section -->
+      <section id="blocking" class="settings-section">
+        <h1 class="section-title">Blocking Settings</h1>
+        <p class="section-description">Configure what content to block</p>
+        
+        <div class="settings-group">
+          <h2 class="group-title">Blocking Level</h2>
+          <p class="group-description">Choose a preset that matches your needs</p>
+          
+          <div class="level-cards">
+            <div class="level-card" data-level="minimal">
+              <div class="level-icon">🟢</div>
+              <h3 class="level-name">Minimal</h3>
+              <p class="level-description">Block only malware and cryptominers. Best compatibility.</p>
+              <ul class="level-features">
+                <li>✅ Malware protection</li>
+                <li>✅ Cryptominer blocking</li>
+                <li>❌ Ad blocking</li>
+                <li>❌ Tracker blocking</li>
+              </ul>
+            </div>
+            
+            <div class="level-card selected" data-level="moderate">
+              <div class="level-icon">🟡</div>
+              <h3 class="level-name">Moderate</h3>
+              <p class="level-description">Block ads, trackers, and threats. Recommended for most users.</p>
+              <ul class="level-features">
+                <li>✅ Malware protection</li>
+                <li>✅ Cryptominer blocking</li>
+                <li>✅ Ad blocking</li>
+                <li>✅ Tracker blocking</li>
+              </ul>
+            </div>
+            
+            <div class="level-card" data-level="aggressive">
+              <div class="level-icon">🔴</div>
+              <h3 class="level-name">Aggressive</h3>
+              <p class="level-description">Maximum protection. May break some websites.</p>
+              <ul class="level-features">
+                <li>✅ All protections</li>
+                <li>✅ First-party blocking</li>
+                <li>✅ Cookie blocking</li>
+                <li>✅ JavaScript blocking</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="settings-group">
+          <h2 class="group-title">Categories</h2>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Block Ads</h3>
+              <p class="setting-description">Remove advertisements from websites</p>
+            </div>
+            <label class="toggle-switch" for="settingBlockAds"><input type="checkbox" id="settingBlockAds" title="Toggle setting" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Block Trackers</h3>
+              <p class="setting-description">Prevent tracking scripts from monitoring you</p>
+            </div>
+            <label class="toggle-switch" for="settingBlockTrackers"><input type="checkbox" id="settingBlockTrackers" title="Toggle setting" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Block Social Widgets</h3>
+              <p class="setting-description">Block Facebook, Twitter, and other social trackers</p>
+            </div>
+            <label class="toggle-switch" for="settingBlockSocial"><input type="checkbox" id="settingBlockSocial" title="Toggle setting" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Block Cryptominers</h3>
+              <p class="setting-description">Prevent websites from using your CPU for mining</p>
+            </div>
+            <label class="toggle-switch" for="settingBlockMiners"><input type="checkbox" id="settingBlockMiners" title="Toggle setting" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Block Malware</h3>
+              <p class="setting-description">Block known malicious domains and scripts</p>
+            </div>
+            <label class="toggle-switch" for="settingBlockMalware"><input type="checkbox" id="settingBlockMalware" title="Toggle setting" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Privacy Section -->
+      <section id="privacy" class="settings-section">
+        <h1 class="section-title">Privacy Settings</h1>
+        <p class="section-description">Protect your online privacy</p>
+        
+        <div class="settings-group">
+          <h2 class="group-title">Fingerprint Protection</h2>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Anti-Fingerprinting</h3>
+              <p class="setting-description">Protect against browser fingerprinting techniques</p>
+            </div>
+            <label class="toggle-switch" for="settingAntiFingerprint"><input type="checkbox" id="settingAntiFingerprint" title="Toggle setting" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Canvas Protection</h3>
+              <p class="setting-description">Add noise to canvas fingerprinting attempts</p>
+            </div>
+            <label class="toggle-switch" for="settingCanvasProtect"><input type="checkbox" id="settingCanvasProtect" title="Toggle setting" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">WebGL Protection</h3>
+              <p class="setting-description">Spoof WebGL renderer information</p>
+            </div>
+            <label class="toggle-switch" for="settingWebGLProtect"><input type="checkbox" id="settingWebGLProtect" title="Toggle setting" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Audio Protection</h3>
+              <p class="setting-description">Protect against audio fingerprinting</p>
+            </div>
+            <label class="toggle-switch" for="settingAudioProtect"><input type="checkbox" id="settingAudioProtect" title="Toggle setting" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="settings-group">
+          <h2 class="group-title">Cookies & Tracking</h2>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Auto-Delete Cookies</h3>
+              <p class="setting-description">Automatically delete third-party cookies</p>
+            </div>
+            <label class="toggle-switch" for="settingCookieAutoDelete"><input type="checkbox" id="settingCookieAutoDelete" title="Toggle setting">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Remove Tracking Parameters</h3>
+              <p class="setting-description">Strip UTM, fbclid, gclid from URLs</p>
+            </div>
+            <label class="toggle-switch" for="settingRemoveTracking"><input type="checkbox" id="settingRemoveTracking" title="Toggle setting" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Block WebRTC Leaks</h3>
+              <p class="setting-description">Prevent WebRTC from leaking your IP address</p>
+            </div>
+            <label class="toggle-switch" for="settingBlockWebRTC"><input type="checkbox" id="settingBlockWebRTC" title="Toggle setting">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Block Battery API</h3>
+              <p class="setting-description">Prevent websites from reading battery status</p>
+            </div>
+            <label class="toggle-switch" for="settingBlockBattery"><input type="checkbox" id="settingBlockBattery" title="Toggle setting" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="settings-group">
+          <h2 class="group-title">AI Detection</h2>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">AI-Powered Detection</h3>
+              <p class="setting-description">Use machine learning to detect new threats</p>
+            </div>
+            <label class="toggle-switch" for="settingAIDetection"><input type="checkbox" id="settingAIDetection" title="Toggle setting" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Learn from Blocks</h3>
+              <p class="setting-description">Improve detection by learning from blocked requests</p>
+            </div>
+            <label class="toggle-switch" for="settingAILearning"><input type="checkbox" id="settingAILearning" title="Toggle setting" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Filter Lists Section -->
+      <section id="filters" class="settings-section">
+        <h1 class="section-title">Filter Lists</h1>
+        <p class="section-description">Manage blocking filter lists</p>
+        
+        <div class="filter-actions">
+          <button class="btn-primary" id="updateFiltersBtn">
+            <span>🔄</span> Update All Lists
+          </button>
+          <span class="last-updated" id="lastUpdated">Last updated: Never</span>
+        </div>
+        
+        <div class="settings-group">
+          <h2 class="group-title">Built-in Lists</h2>
+          
+          <div class="filter-list" id="filterListContainer">
+            <!-- Filter lists will be loaded dynamically -->
+          </div>
+        </div>
+        
+        <div class="settings-group">
+          <h2 class="group-title">Add Custom List</h2>
+          <p class="group-description">Add a filter list from a URL</p>
+          
+          <div class="input-group">
+            <input type="url" id="customListUrl" class="text-input" placeholder="https://example.com/filters.txt">
+            <button class="btn-primary" id="addCustomListBtn">Add List</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Whitelist Section -->
+      <section id="whitelist" class="settings-section">
+        <h1 class="section-title">Whitelist</h1>
+        <p class="section-description">Sites where protection is disabled</p>
+        
+        <div class="settings-group">
+          <div class="input-group">
+            <input type="text" id="whitelistInput" class="text-input" placeholder="example.com">
+            <button class="btn-primary" id="addWhitelistBtn">Add Site</button>
+          </div>
+          
+          <div class="domain-list" id="whitelistContainer">
+            <!-- Whitelist entries will be loaded dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Blacklist Section -->
+      <section id="blacklist" class="settings-section">
+        <h1 class="section-title">Blacklist</h1>
+        <p class="section-description">Sites to always block</p>
+        
+        <div class="settings-group">
+          <div class="input-group">
+            <input type="text" id="blacklistInput" class="text-input" placeholder="example.com">
+            <button class="btn-danger" id="addBlacklistBtn">Block Site</button>
+          </div>
+          
+          <div class="domain-list" id="blacklistContainer">
+            <!-- Blacklist entries will be loaded dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Custom Rules Section -->
+      <section id="custom-rules" class="settings-section">
+        <h1 class="section-title">Custom Rules</h1>
+        <p class="section-description">Create your own blocking rules</p>
+        
+        <div class="settings-group">
+          <h2 class="group-title">Add Rule</h2>
+          <p class="group-description">Use AdBlock syntax or simple URL patterns</p>
+          
+          <div class="rule-editor">
+            <textarea id="customRuleInput" class="textarea-input" placeholder="||example.com/ads/*
+||tracking.example.com^
+example.com##.ad-container"></textarea>
+            <button class="btn-primary" id="addCustomRuleBtn">Add Rules</button>
+          </div>
+          
+          <div class="custom-rules-list" id="customRulesContainer">
+            <!-- Custom rules will be loaded dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Advanced Section -->
+      <section id="advanced" class="settings-section">
+        <h1 class="section-title">Advanced Settings</h1>
+        <p class="section-description">For power users</p>
+        
+        <div class="settings-group">
+          <h2 class="group-title">Performance</h2>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Lazy Loading</h3>
+              <p class="setting-description">Defer filter loading for faster startup</p>
+            </div>
+            <label class="toggle-switch" for="settingLazyLoad"><input type="checkbox" id="settingLazyLoad" title="Toggle setting" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Cache Filter Lists</h3>
+              <p class="setting-description">Store filter lists locally for faster matching</p>
+            </div>
+            <label class="toggle-switch" for="settingCacheFilters"><input type="checkbox" id="settingCacheFilters" title="Toggle setting" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="settings-group">
+          <h2 class="group-title">Data</h2>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <h3 class="setting-name">Statistics Retention</h3>
+              <p class="setting-description">How long to keep blocking statistics</p>
+            </div>
+            <select id="settingStatsRetention" class="select-input" title="Select option">
+              <option value="7">7 days</option>
+              <option value="30" selected>30 days</option>
+              <option value="90">90 days</option>
+              <option value="365">1 year</option>
+            </select>
+          </div>
+          
+          <div class="danger-zone">
+            <h3 class="danger-title">Danger Zone</h3>
+            <button class="btn-danger" id="resetStatsBtn">Reset Statistics</button>
+            <button class="btn-danger" id="clearDataBtn">Clear All Data</button>
+            <button class="btn-danger" id="resetSettingsBtn">Reset to Defaults</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section id="about" class="settings-section">
+        <h1 class="section-title">About ShieldGuard</h1>
+        <p class="section-description">Privacy-focused ad and tracker blocking</p>
+        
+        <div class="about-card">
+          <div class="about-logo">
+            <svg width="64" height="64" viewBox="0 0 32 32" fill="none">
+              <defs>
+                <linearGradient id="shield-gradient-large" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#10b981"/>
+                  <stop offset="100%" style="stop-color:#059669"/>
+                </linearGradient>
+              </defs>
+              <path d="M16 2L4 7V14.5C4 21.5 9 27.5 16 30C23 27.5 28 21.5 28 14.5V7L16 2Z" fill="url(#shield-gradient-large)"/>
+              <path d="M14 16L12 14L10.5 15.5L14 19L22 11L20.5 9.5L14 16Z" fill="white"/>
+            </svg>
+          </div>
+          <h2 class="about-name">ShieldGuard</h2>
+          <p class="about-version">Version 1.0.0</p>
+          <p class="about-description">
+            Professional-grade ad blocker with AI-powered threat detection, 
+            anti-fingerprinting, and comprehensive privacy protection.
+          </p>
+          
+          <div class="about-stats">
+            <div class="about-stat">
+              <span class="stat-value" id="aboutTotalBlocked">0</span>
+              <span class="stat-label">Threats Blocked</span>
+            </div>
+            <div class="about-stat">
+              <span class="stat-value" id="aboutDataSaved">0 MB</span>
+              <span class="stat-label">Data Saved</span>
+            </div>
+            <div class="about-stat">
+              <span class="stat-value" id="aboutProtectionDays">0</span>
+              <span class="stat-label">Days Protected</span>
+            </div>
+          </div>
+          
+          <div class="about-links">
+            <a href="#" class="about-link" id="dashboardLink">📊 View Dashboard</a>
+            <a href="#" class="about-link" id="reportLink">🐛 Report Issue</a>
+            <a href="#" class="about-link" id="rateLink">⭐ Rate Extension</a>
+          </div>
+        </div>
+        
+        <div class="settings-group">
+          <h2 class="group-title">Privacy Policy</h2>
+          <div class="privacy-info">
+            <p>✅ No data collection - everything stays on your device</p>
+            <p>✅ No external analytics or tracking</p>
+            <p>✅ All processing happens locally</p>
+            <p>✅ Open source and auditable</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="settings.js"></script>
+</body>
+</html>
+

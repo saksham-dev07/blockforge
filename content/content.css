@@ -1,0 +1,302 @@
+/**
+ * ShieldGuard - Content Script Styles
+ * 
+ * CSS for hiding ad elements and styling injected UI elements
+ */
+
+/* ============================================================================
+   AD ELEMENT HIDING
+   ============================================================================ */
+
+/* Generic ad containers - very specific to avoid false positives */
+[id*="google_ads"],
+[id*="GoogleAds"],
+[data-ad-slot],
+[data-ad-client],
+[data-adservice],
+div[id^="div-gpt-ad"],
+div[class^="adsbygoogle"],
+iframe[id*="_ad_"],
+iframe[class*="_ad_"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Google Ads */
+ins.adsbygoogle {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* AMP ads */
+amp-ad,
+amp-embed,
+amp-sticky-ad {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Tracking pixels */
+img[width="1"],
+img[height="1"],
+img[src*="pixel"],
+img[src*="beacon"],
+img[src*="track"] {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Ad iframes */
+iframe[src*="doubleclick"],
+iframe[src*="googlesyndication"],
+iframe[src*="googleadservices"],
+iframe[src*="adservice"],
+iframe[src*="advertising"],
+iframe[id*="google_ads"] {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Social tracking widgets - optional, uncomment if needed */
+/*
+.fb-like,
+.fb-share-button,
+.twitter-share-button,
+.g-plus,
+.linkedin-share {
+  display: none !important;
+}
+*/
+
+/* ============================================================================
+   SHIELDGUARD UI ELEMENTS
+   ============================================================================ */
+
+/* Threat indicator badge */
+.shieldguard-threat-badge {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 2147483647;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: shieldguard-slide-in 0.3s ease-out;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.shieldguard-threat-badge:hover {
+  transform: scale(1.05);
+}
+
+.shieldguard-threat-badge.hidden {
+  opacity: 0;
+  transform: translateY(-20px);
+  pointer-events: none;
+}
+
+.shieldguard-threat-badge .icon {
+  width: 16px;
+  height: 16px;
+}
+
+@keyframes shieldguard-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Protection status indicator */
+.shieldguard-status {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 2147483647;
+  background: rgba(16, 185, 129, 0.9);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.shieldguard-status.visible {
+  opacity: 1;
+}
+
+.shieldguard-status .dot {
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  animation: shieldguard-pulse 2s infinite;
+}
+
+@keyframes shieldguard-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Blocked content placeholder */
+.shieldguard-blocked-placeholder {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  color: #6b7280;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  margin: 10px 0;
+}
+
+.shieldguard-blocked-placeholder .icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+  opacity: 0.5;
+}
+
+.shieldguard-blocked-placeholder .message {
+  font-weight: 500;
+  color: #374151;
+}
+
+/* ============================================================================
+   DARK MODE SUPPORT
+   ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  .shieldguard-blocked-placeholder {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    border-color: #374151;
+    color: #9ca3af;
+  }
+  
+  .shieldguard-blocked-placeholder .message {
+    color: #d1d5db;
+  }
+}
+
+/* ============================================================================
+   YOUTUBE AD BLOCKING
+   ============================================================================ */
+
+/* YouTube companion ads and view models - specific selectors only */
+#player-ads,
+ytd-player-legacy-desktop-watch-ads-renderer,
+ytd-companion-slot-renderer,
+ytd-companion-legal-text-renderer,
+ad-image-view-model,
+ad-avatar-view-model,
+ad-avatar-lockup-view-model,
+ad-badge-view-model,
+ad-button-view-model,
+ad-details-line-view-model,
+top-banner-image-text-icon-buttoned-layout-view-model,
+badge-shape.yt-badge-shape--ad,
+ytd-action-companion-ad-renderer,
+ytd-merch-shelf-renderer,
+.video-ads.ytp-ad-module,
+.ytp-ad-overlay-container,
+.ytp-ad-overlay-slot,
+.ytp-ad-image-overlay,
+.ytp-ad-text-overlay,
+.ytp-ad-overlay-image,
+.ytp-ad-player-overlay,
+.ytp-ad-player-overlay-layout,
+.ytp-ad-player-overlay-layout__player-card-container,
+.ytp-ad-player-overlay-layout__ad-info-container,
+.ytp-ad-player-overlay-layout__skip-or-preview-container,
+.ytp-ad-player-overlay-layout__ad-disclosure-banner-container,
+.ytp-ad-avatar-lockup-card,
+.ytp-ad-badge--clean-player,
+.ytp-ad-badge--stark-clean-player,
+.ytp-ad-info-hover-text-button,
+.ytp-visit-advertiser-link,
+.ytp-ad-persistent-progress-bar-container,
+.ytp-ad-button-vm,
+.ad-simple-attributed-string,
+.ytp-ad-preview-container,
+ytd-banner-promo-renderer,
+ytd-statement-banner-renderer,
+#masthead-ad,
+ytd-promoted-sparkles-web-renderer,
+ytd-display-ad-renderer,
+ytd-video-masthead-ad-v3-renderer,
+ytd-primetime-promo-renderer,
+ytd-ad-slot-renderer,
+ytd-in-feed-ad-layout-renderer,
+ytd-promoted-video-renderer,
+ytd-ad-break-renderer,
+ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-ads"],
+.ytp-ad-module,
+.ytp-ad-button-slot,
+.ytp-ad-skip-button-container,
+ytd-search-pyv-renderer,
+ytd-rich-item-renderer:has([href*="googleadservices"]),
+ytd-compact-promoted-video-renderer,
+ytd-promoted-sparkles-text-search-renderer {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  width: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  left: -9999px !important;
+}
+
+/* ============================================================================
+   ANIMATIONS FOR REMOVED ELEMENTS
+   ============================================================================ */
+
+.shieldguard-removing {
+  animation: shieldguard-fade-out 0.2s ease-out forwards;
+}
+
+@keyframes shieldguard-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+    height: 0;
+    margin: 0;
+    padding: 0;
+  }
+}

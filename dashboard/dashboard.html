@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BlockForge Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">🛡️</div>
+          <div class="logo-text">
+            <h1>ShieldGuard Dashboard</h1>
+            <span class="logo-subtitle">Advanced Protection Analytics</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <div class="live-indicator">
+            <span class="live-dot"></span>
+            <span>Live</span>
+          </div>
+          <button class="btn btn-secondary" id="refreshBtn">🔄 Refresh</button>
+          <button class="btn btn-secondary" id="exportData">📥 Export</button>
+          <button class="btn btn-primary" id="settingsBtn">⚙️ Settings</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      
+      <!-- Primary Stats Row -->
+      <section class="stats-grid primary-stats">
+        <div class="stat-card featured">
+          <div class="stat-icon-wrap">
+            <div class="stat-icon">🛡️</div>
+            <div class="stat-ring"></div>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value" id="totalBlocked">0</div>
+            <div class="stat-label">Total Threats Blocked</div>
+            <div class="stat-trend" id="totalTrend">
+              <span class="trend-icon">📈</span>
+              <span class="trend-text">--</span>
+            </div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📢</div>
+          <div class="stat-value" id="adsBlocked">0</div>
+          <div class="stat-label">Ads Blocked</div>
+          <div class="stat-percent" id="adsPercent">0%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👁️</div>
+          <div class="stat-value" id="trackersBlocked">0</div>
+          <div class="stat-label">Trackers Stopped</div>
+          <div class="stat-percent" id="trackersPercent">0%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⛏️</div>
+          <div class="stat-value" id="minersBlocked">0</div>
+          <div class="stat-label">Crypto Miners</div>
+          <div class="stat-percent" id="minersPercent">0%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">☠️</div>
+          <div class="stat-value" id="malwareBlocked">0</div>
+          <div class="stat-label">Malware Blocked</div>
+          <div class="stat-percent" id="malwarePercent">0%</div>
+        </div>
+      </section>
+
+      <!-- Performance Stats -->
+      <section class="stats-grid secondary-stats">
+        <div class="stat-card mini">
+          <div class="stat-icon">💾</div>
+          <div class="stat-value" id="dataSaved">0 B</div>
+          <div class="stat-label">Data Saved</div>
+        </div>
+        <div class="stat-card mini">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-value" id="timeSaved">0s</div>
+          <div class="stat-label">Time Saved</div>
+        </div>
+        <div class="stat-card mini">
+          <div class="stat-icon">🌐</div>
+          <div class="stat-value" id="sitesVisited">0</div>
+          <div class="stat-label">Sites Protected</div>
+        </div>
+        <div class="stat-card mini">
+          <div class="stat-icon">📊</div>
+          <div class="stat-value" id="avgPerPage">0</div>
+          <div class="stat-label">Avg Blocks/Page</div>
+        </div>
+        <div class="stat-card mini">
+          <div class="stat-icon">🔥</div>
+          <div class="stat-value" id="blocksToday">0</div>
+          <div class="stat-label">Blocked Today</div>
+        </div>
+        <div class="stat-card mini">
+          <div class="stat-icon">📅</div>
+          <div class="stat-value" id="activeDays">0</div>
+          <div class="stat-label">Days Active</div>
+        </div>
+      </section>
+
+      <!-- Charts Row 1 -->
+      <section class="charts-row">
+        <!-- Category Breakdown -->
+        <div class="card">
+          <div class="card-header">
+            <h2>📊 Threat Category Breakdown</h2>
+            <div class="card-actions">
+              <select id="categoryTimeRange" class="mini-select" title="Time range">
+                <option value="all">All Time</option>
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+              </select>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="category-grid" id="categoryChart">
+              <div class="no-data">Loading...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekly Trends -->
+        <div class="card">
+          <div class="card-header">
+            <h2>📈 Blocking Trends</h2>
+            <div class="card-actions">
+              <select id="trendsRange" class="mini-select" title="Trend range">
+                <option value="7">Last 7 Days</option>
+                <option value="14">Last 14 Days</option>
+                <option value="30">Last 30 Days</option>
+              </select>
+            </div>
+          </div>
+          <div class="card-body" id="trendsChart">
+            <div class="no-data">Loading...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts Row 2 -->
+      <section class="charts-row">
+        <!-- Hourly Activity -->
+        <div class="card">
+          <div class="card-header">
+            <h2>🕐 Hourly Activity</h2>
+          </div>
+          <div class="card-body" id="hourlyChart">
+            <div class="no-data">Loading...</div>
+          </div>
+        </div>
+
+        <!-- Block Type Distribution -->
+        <div class="card">
+          <div class="card-header">
+            <h2>🎯 Protection Summary</h2>
+          </div>
+          <div class="card-body">
+            <div class="protection-summary" id="protectionSummary">
+              <div class="no-data">Loading...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Details Row -->
+      <section class="details-row three-col">
+        <!-- Top Blocked Domains -->
+        <div class="card">
+          <div class="card-header">
+            <h2>🚫 Top Blocked Domains</h2>
+            <span class="card-badge" id="totalDomains">0 domains</span>
+          </div>
+          <div class="card-body scrollable" id="topDomains">
+            <div class="no-data">Loading...</div>
+          </div>
+        </div>
+
+        <!-- Recent Blocks -->
+        <div class="card">
+          <div class="card-header">
+            <h2>📋 Recent Blocks</h2>
+            <span class="card-badge" id="totalBlocksBadge">0 blocks</span>
+          </div>
+          <div class="card-body scrollable" id="recentBlocks">
+            <div class="no-data">Loading...</div>
+          </div>
+        </div>
+
+        <!-- Top Sites Protected -->
+        <div class="card">
+          <div class="card-header">
+            <h2>🌐 Most Protected Sites</h2>
+          </div>
+          <div class="card-body scrollable" id="topSites">
+            <div class="no-data">Loading...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Request Types Analysis -->
+      <section class="charts-row">
+        <div class="card full-width">
+          <div class="card-header">
+            <h2>📡 Blocked Request Types</h2>
+          </div>
+          <div class="card-body" id="requestTypesChart">
+            <div class="no-data">Loading...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Privacy Score Section -->
+      <section class="privacy-section">
+        <div class="card privacy-card">
+          <div class="card-header">
+            <h2>🔒 Privacy Protection Score</h2>
+          </div>
+          <div class="card-body">
+            <div class="privacy-score-container" id="privacyScore">
+              <div class="score-circle">
+                <svg viewBox="0 0 100 100">
+                  <circle class="score-bg" cx="50" cy="50" r="45"></circle>
+                  <circle class="score-fill" cx="50" cy="50" r="45" id="scoreCircle"></circle>
+                </svg>
+                <div class="score-value" id="scoreValue">--</div>
+              </div>
+              <div class="score-details">
+                <div class="score-item">
+                  <span class="score-label">Ad Blocking</span>
+                  <div class="score-bar"><div class="score-bar-fill" id="adScore" style="width: 0%"></div></div>
+                </div>
+                <div class="score-item">
+                  <span class="score-label">Tracker Protection</span>
+                  <div class="score-bar"><div class="score-bar-fill" id="trackerScore" style="width: 0%"></div></div>
+                </div>
+                <div class="score-item">
+                  <span class="score-label">Malware Defense</span>
+                  <div class="score-bar"><div class="score-bar-fill" id="malwareScore" style="width: 0%"></div></div>
+                </div>
+                <div class="score-item">
+                  <span class="score-label">Mining Prevention</span>
+                  <div class="score-bar"><div class="score-bar-fill" id="miningScore" style="width: 0%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Actions -->
+      <section class="actions-section">
+        <button class="btn btn-secondary" id="clearLogBtn">🧹 Clear Log</button>
+        <button class="btn btn-danger" id="resetStats">🗑️ Reset All Statistics</button>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+      <div class="footer-content">
+        <div class="footer-stats">
+          <span>Session started: <strong id="sessionStart">--</strong></span>
+          <span>Last updated: <strong id="lastUpdated">--</strong></span>
+        </div>
+        <p>ShieldGuard v1.0.0 • Advanced Privacy Protection</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

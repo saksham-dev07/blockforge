@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BlockForge</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">🛡️</div>
+        <div class="logo-text">
+          <span class="brand">BlockForge</span>
+        </div>
+      </div>
+      <button class="power-btn" id="powerBtn" title="Toggle Protection">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2v10M18.4 6.6a9 9 0 1 1-12.8 0"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Current Site Section -->
+    <div class="site-section">
+      <div class="site-header">
+        <div class="site-info">
+          <span class="site-label">Current Site</span>
+          <span class="site-hostname" id="hostname">Loading...</span>
+        </div>
+        <button class="site-toggle-btn" id="siteToggleBtn" title="Toggle protection for this site">
+          <span id="siteToggleIcon">✓</span>
+        </button>
+      </div>
+      <div class="site-status" id="siteStatus">
+        <span class="status-dot active"></span>
+        <span class="status-text">Protected</span>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="overview">Overview</button>
+      <button class="tab-btn" data-tab="blocked">Blocked (<span id="blockedCount">0</span>)</button>
+      <button class="tab-btn" data-tab="settings">Settings</button>
+    </div>
+
+    <!-- Tab Content: Overview -->
+    <div class="tab-content active" id="tab-overview">
+      <!-- This Page Stats -->
+      <div class="stats-section">
+        <h3 class="section-title">📄 This Page</h3>
+        <div class="page-stats">
+          <div class="page-stat">
+            <span class="page-stat-value" id="pageTotal">0</span>
+            <span class="page-stat-label">Blocked</span>
+          </div>
+          <div class="page-stat">
+            <span class="page-stat-value" id="pageAds">0</span>
+            <span class="page-stat-label">Ads</span>
+          </div>
+          <div class="page-stat">
+            <span class="page-stat-value" id="pageTrackers">0</span>
+            <span class="page-stat-label">Trackers</span>
+          </div>
+          <div class="page-stat">
+            <span class="page-stat-value" id="pageOther">0</span>
+            <span class="page-stat-label">Other</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Global Stats -->
+      <div class="stats-section">
+        <h3 class="section-title">🌐 All Time</h3>
+        <div class="global-stats">
+          <div class="global-stat">
+            <div class="global-stat-icon">🛡️</div>
+            <div class="global-stat-info">
+              <span class="global-stat-value" id="totalBlocked">0</span>
+              <span class="global-stat-label">Total Blocked</span>
+            </div>
+          </div>
+          <div class="global-stat">
+            <div class="global-stat-icon">📢</div>
+            <div class="global-stat-info">
+              <span class="global-stat-value" id="totalAds">0</span>
+              <span class="global-stat-label">Ads</span>
+            </div>
+          </div>
+          <div class="global-stat">
+            <div class="global-stat-icon">👁️</div>
+            <div class="global-stat-info">
+              <span class="global-stat-value" id="totalTrackers">0</span>
+              <span class="global-stat-label">Trackers</span>
+            </div>
+          </div>
+          <div class="global-stat">
+            <div class="global-stat-icon">💾</div>
+            <div class="global-stat-info">
+              <span class="global-stat-value" id="dataSaved">0 B</span>
+              <span class="global-stat-label">Data Saved</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Content: Blocked Items -->
+    <div class="tab-content" id="tab-blocked">
+      <div class="blocked-section">
+        <div class="blocked-header">
+          <h3 class="section-title">🚫 Blocked on this page</h3>
+          <button class="refresh-btn" id="refreshBlockedBtn" title="Refresh">🔄</button>
+        </div>
+        <div class="blocked-filter">
+          <label for="blockedFilter" class="visually-hidden">Filter blocked items by type</label>
+          <select id="blockedFilter" title="Filter blocked items by type">
+            <option value="all">All Types</option>
+            <option value="ad">Ads</option>
+            <option value="tracker">Trackers</option>
+            <option value="miner">Miners</option>
+            <option value="malware">Malware</option>
+          </select>
+        </div>
+        <div class="blocked-list" id="blockedList">
+          <div class="empty-state">No items blocked yet on this page</div>
+        </div>
+      </div>
+
+      <!-- Custom Unblocks -->
+      <div class="unblocks-section">
+        <h3 class="section-title">✅ Allowed on this site</h3>
+        <div class="unblocked-list" id="unblockedList">
+          <div class="empty-state">No custom exceptions</div>
+        </div>
+        <div class="add-exception">
+          <input type="text" id="exceptionInput" placeholder="Enter URL pattern to allow...">
+          <button class="add-btn" id="addExceptionBtn">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Content: Settings -->
+    <div class="tab-content" id="tab-settings">
+      <div class="settings-section">
+        <h3 class="section-title">⚡ Quick Settings</h3>
+        <div class="settings-list">
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-icon">📢</span>
+              <span class="setting-name">Block Ads</span>
+            </div>
+            <label class="toggle" for="toggleAds">
+              <input type="checkbox" id="toggleAds" checked title="Toggle ad blocking">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-icon">👁️</span>
+              <span class="setting-name">Block Trackers</span>
+            </div>
+            <label class="toggle" for="toggleTrackers">
+              <input type="checkbox" id="toggleTrackers" checked title="Toggle tracker blocking">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-icon">⛏️</span>
+              <span class="setting-name">Block Miners</span>
+            </div>
+            <label class="toggle" for="toggleMiners">
+              <input type="checkbox" id="toggleMiners" checked title="Toggle crypto miner blocking">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-icon">🔒</span>
+              <span class="setting-name">Anti-Fingerprint</span>
+            </div>
+            <label class="toggle" for="toggleFingerprint">
+              <input type="checkbox" id="toggleFingerprint" checked title="Toggle anti-fingerprinting protection">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions-section">
+        <button class="action-btn" id="openDashboard">📊 Open Dashboard</button>
+        <button class="action-btn" id="openSettings">⚙️ All Settings</button>
+        <button class="action-btn danger" id="resetStats">🗑️ Reset Stats</button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span class="version">v1.0.0</span>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
