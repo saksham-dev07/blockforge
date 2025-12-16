@@ -18,7 +18,7 @@ export class StorageManager {
       aiDetection: true,
       removeTrackingParams: true,
       blockWebRTC: false,
-      whitelist: [],
+      whitelist: ['github.com', 'raw.githubusercontent.com', 'gist.github.com'],
       blacklist: [],
       filterLists: {
         easylist: true,
