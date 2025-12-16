@@ -120,25 +120,26 @@
     'iframe[width="970"][height="250"]',
     'iframe[width="300"][height="600"]',
     
-    // Common ad networks
+    // Common ad networks - be specific to avoid false positives
     'ins.adsbygoogle',
     'ins.adsbyexample',
     'amp-ad',
     'amp-embed',
-    '[data-ad]',
-    '[data-ad-slot]',
-    '[data-ad-client]',
-    '[data-adservice]',
-    '[data-google-query-id]',
+    // Only block elements with both ad slot AND ad client (actual Google Ads)
+    '[data-ad-slot][data-ad-client]',
+    'div[data-ad-slot]',
+    'ins[data-ad-slot]',
+    'ins[data-ad-client]',
+    '[data-adservice][data-ad-slot]',
+    '[data-google-query-id][data-ad-slot]',
     '[data-ad-unit-id]',
-    '[data-testid*="ad"]',
-    '[data-component*="ad"]',
-    '[data-type="ad"]',
+    // Very specific test IDs and components
+    '[data-testid="ad-container"]',
+    '[data-testid="ad-banner"]',
+    '[data-component="advertisement"]',
+    '[data-type="advertisement"]',
     
-    // Specific ad containers
-    '.ad',
-    '.ads',
-    '.adv',
+    // Specific ad containers - avoid overly broad selectors
     '.adbox',
     '.ad-box',
     '.adunit',
@@ -147,8 +148,6 @@
     '.adsbox',
     '.adSpace',
     '.ad-space',
-    '.adBlock',
-    '.ad-block',
     '.adContainer',
     '.adwrapper',
     '.adframe',
@@ -168,9 +167,6 @@
     '.adpanel',
     '.ad-panel',
     '.adsense',
-    '#ad',
-    '#ads',
-    '#adv',
     '#adbox',
     '#advertisement',
     '#adContainer',
@@ -378,6 +374,10 @@
       return;
     }
     
+    // Inject protection script immediately - even before DOM
+    // This must run first to intercept fingerprinting APIs
+    injectProtectionScript();
+    
     // Start early Flash blocking immediately
     earlyFlashBlock();
     
@@ -391,9 +391,6 @@
     
     // Run immediately for document_start
     if (document.readyState === 'loading') {
-      // Inject protection script as early as possible
-      injectProtectionScript();
-      
       document.addEventListener('DOMContentLoaded', () => {
         removeAdElements();
         setupMutationObserver();
@@ -401,7 +398,6 @@
       });
     } else {
       // Document already loaded
-      injectProtectionScript();
       removeAdElements();
       setupMutationObserver();
       analyzePageContent();
@@ -669,6 +665,12 @@
     
     // Skip DOM manipulation on YouTube - the YouTube blocker handles it specifically
     if (config.hostname.includes('youtube.com')) {
+      return;
+    }
+    
+    // Skip DOM manipulation on Google Search - rely on CSS and network blocking only
+    if (/^(www\.)?google\.(com|[a-z]{2,3})$/.test(config.hostname)) {
+      console.log('[BlockForge] Google Search detected - using CSS/network rules only');
       return;
     }
     
@@ -1268,6 +1270,12 @@
    * Inject cosmetic CSS styles immediately to hide ads before they render
    */
   function injectCosmeticStyles() {
+    // Skip CSS injection entirely for Google Search - rely only on network blocking
+    if (/^(www\.)?google\.(com|[a-z]{2,3})$/.test(config.hostname)) {
+      console.log('[BlockForge] Google Search detected - skipping CSS injection');
+      return;
+    }
+    
     // Create style element as early as possible
     const style = document.createElement('style');
     style.id = 'blockforge-cosmetic-block';
@@ -1789,21 +1797,38 @@
   /**
    * Inject privacy protection script
    */
+  /**
+   * Inject protection script via background service worker
+   * This bypasses CSP restrictions by using chrome.scripting API with world: MAIN
+   */
   function injectProtectionScript() {
     // Check if extension context is still valid
     if (!isExtensionContextValid()) {
       return;
     }
     
-    // Use web_accessible_resources for injection
+    // Request background script to inject using chrome.scripting API
+    // This runs in MAIN world and bypasses CSP inline script restrictions
     try {
-      const script = document.createElement('script');
-      script.src = chrome.runtime.getURL('inject/fingerprint-protect.js');
-      script.onload = () => script.remove();
-      (document.head || document.documentElement).appendChild(script);
-    } catch (e) {
-      // Fallback: inject inline script
-      injectInlineProtection();
+      chrome.runtime.sendMessage({ 
+        type: 'INJECT_PROTECTION_SCRIPT' 
+      }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.warn('[BlockForge] Failed to request script injection:', chrome.runtime.lastError.message);
+          // Context may be invalidated
+          extensionContextValid = !!chrome.runtime?.id;
+          return;
+        }
+        
+        if (response?.success) {
+          console.log('[BlockForge] Protection script injected successfully');
+        } else {
+          console.warn('[BlockForge] Protection script injection failed:', response?.error);
+        }
+      });
+    } catch (error) {
+      console.error('[BlockForge] Script injection request error:', error);
+      extensionContextValid = false;
     }
   }
   
@@ -1811,10 +1836,33 @@
    * Inject inline protection script
    */
   function injectInlineProtection() {
-    const script = document.createElement('script');
-    script.textContent = getProtectionScript();
-    (document.head || document.documentElement).appendChild(script);
-    script.remove();
+    try {
+      const script = document.createElement('script');
+      script.textContent = getProtectionScript();
+      script.setAttribute('data-blockforge', 'protection');
+      
+      // Inject as early as possible - before any other scripts
+      const target = document.head || document.documentElement;
+      if (target) {
+        // Insert at the beginning to run before other scripts
+        const firstChild = target.firstChild;
+        if (firstChild) {
+          target.insertBefore(script, firstChild);
+        } else {
+          target.appendChild(script);
+        }
+        // Remove script element after execution to avoid detection
+        setTimeout(() => script.remove(), 0);
+      }
+    } catch (error) {
+      // If insertion fails, try direct execution via eval (last resort)
+      try {
+        const fn = new Function(getProtectionScript());
+        fn();
+      } catch (e) {
+        console.warn('[BlockForge] Protection script injection failed:', e);
+      }
+    }
   }
   
   /**

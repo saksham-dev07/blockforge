@@ -297,6 +297,84 @@ async function handleMessage(message, sender) {
   console.log('📨 Message received:', action);
   
   switch (action) {
+    case 'injectProtectionScript':
+    case 'INJECT_PROTECTION_SCRIPT': {
+      // Inject protection script into page context (MAIN world) to bypass CSP
+      if (!sender.tab?.id) {
+        return { success: false, error: 'No tab ID' };
+      }
+      
+      try {
+        await chrome.scripting.executeScript({
+          target: { tabId: sender.tab.id },
+          world: 'MAIN',
+          injectImmediately: true,
+          func: function() {
+            // Protection script injected directly into page context
+            if (window.__blockforge_injected__) return;
+            window.__blockforge_injected__ = true;
+            
+            const seed = Math.floor(Math.random() * 1000000);
+            let seedCounter = seed;
+            
+            function random() {
+              const x = Math.sin(seedCounter++) * 10000;
+              return x - Math.floor(x);
+            }
+            
+            // Canvas fingerprinting protection
+            if (HTMLCanvasElement.prototype.toDataURL) {
+              const originalToDataURL = HTMLCanvasElement.prototype.toDataURL;
+              HTMLCanvasElement.prototype.toDataURL = function() {
+                const context = this.getContext('2d');
+                if (context) {
+                  const imageData = context.getImageData(0, 0, this.width, this.height);
+                  for (let i = 0; i < imageData.data.length; i += 4) {
+                    imageData.data[i] += (random() - 0.5) * 2;
+                  }
+                  context.putImageData(imageData, 0, 0);
+                }
+                return originalToDataURL.apply(this, arguments);
+              };
+            }
+            
+            // WebGL fingerprinting protection
+            if (WebGLRenderingContext.prototype.getParameter) {
+              const originalGetParameter = WebGLRenderingContext.prototype.getParameter;
+              WebGLRenderingContext.prototype.getParameter = function(parameter) {
+                if (parameter === 37445) return 'Intel Inc.';
+                if (parameter === 37446) return 'Intel Iris OpenGL Engine';
+                return originalGetParameter.apply(this, arguments);
+              };
+            }
+            
+            // AudioContext fingerprinting protection
+            if (typeof AudioContext !== 'undefined') {
+              const OriginalAudioContext = AudioContext;
+              window.AudioContext = function() {
+                const context = new OriginalAudioContext();
+                const originalCreateOscillator = context.createOscillator.bind(context);
+                context.createOscillator = function() {
+                  const oscillator = originalCreateOscillator();
+                  const originalStart = oscillator.start.bind(oscillator);
+                  oscillator.start = function() {
+                    oscillator.frequency.value += (random() - 0.5) * 0.001;
+                    return originalStart.apply(this, arguments);
+                  };
+                  return oscillator;
+                };
+                return context;
+              };
+            }
+          }
+        });
+        return { success: true };
+      } catch (error) {
+        console.error('Failed to inject protection script:', error);
+        return { success: false, error: error.message };
+      }
+    }
+    
     case 'contentScriptReady':
     case 'CONTENT_SCRIPT_READY': {
       // Content script is ready, send configuration

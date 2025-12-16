@@ -9,15 +9,14 @@
    ============================================================================ */
 
 /* Generic ad containers - very specific to avoid false positives */
-[id*="google_ads"],
-[id*="GoogleAds"],
-[data-ad-slot],
-[data-ad-client],
-[data-adservice],
-div[id^="div-gpt-ad"],
-div[class^="adsbygoogle"],
-iframe[id*="_ad_"],
-iframe[class*="_ad_"] {
+/* Only target actual Google Ad iframe containers, not Google's own UI */
+iframe[id*="google_ads_iframe"],
+iframe[id*="aswift_"],
+div[id^="div-gpt-ad-"],
+ins[data-ad-slot],
+ins[data-ad-client],
+div[data-adservice][data-ad-slot],
+div[class^="adsbygoogle"]:not([class*="search"]):not([class*="nav"]) {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
@@ -42,23 +41,28 @@ amp-sticky-ad {
   visibility: hidden !important;
 }
 
-/* Tracking pixels */
-img[width="1"],
-img[height="1"],
-img[src*="pixel"],
-img[src*="beacon"],
-img[src*="track"] {
+/* Tracking pixels - more specific to avoid blocking emojis */
+img[width="1"][height="1"],
+img[width="1"][src*="analytics"],
+img[width="1"][src*="tracking"],
+img[height="1"][src*="analytics"],
+img[height="1"][src*="tracking"],
+img[src*="tracking-pixel"],
+img[src*="analytics-pixel"],
+img[src*="beacon."][width="1"],
+img[src*="beacon."][height="1"] {
   display: none !important;
   visibility: hidden !important;
 }
 
-/* Ad iframes */
-iframe[src*="doubleclick"],
-iframe[src*="googlesyndication"],
-iframe[src*="googleadservices"],
-iframe[src*="adservice"],
-iframe[src*="advertising"],
-iframe[id*="google_ads"] {
+/* Ad iframes - be specific to avoid blocking legitimate Google services */
+iframe[src*="doubleclick.net"],
+iframe[src*="googlesyndication.com"],
+iframe[src*="googleadservices.com"],
+iframe[src*="/adservice/"],
+iframe[src*="/advertising/"],
+iframe[id^="google_ads_iframe"],
+iframe[id^="aswift_"] {
   display: none !important;
   visibility: hidden !important;
 }
