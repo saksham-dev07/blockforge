@@ -1,5 +1,5 @@
 /**
- * ShieldGuard - Rule Manager Module
+ * BlockForge - Rule Manager Module
  * 
  * Manages declarativeNetRequest rules:
  * - Static rule sets

@@ -1,5 +1,5 @@
 /**
- * ShieldGuard - Background Service Worker
+ * BlockForge - Background Service Worker
  * 
  * This is the core of the extension that handles:
  * - Network request monitoring and blocking

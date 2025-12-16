@@ -1,5 +1,5 @@
 /**
- * ShieldGuard - AI Detector Module
+ * BlockForge - AI Detector Module
  * 
  * Provides AI-powered threat detection:
  * - Pattern analysis for new trackers

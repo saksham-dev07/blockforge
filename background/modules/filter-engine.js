@@ -1,5 +1,5 @@
 /**
- * ShieldGuard - Filter Engine Module
+ * BlockForgeBlockForge - Filter Engine Module
  * 
  * Handles filter list management:
  * - Parsing EasyList, hosts files, and other formats

@@ -1,5 +1,5 @@
 /**
- * ShieldGuard - Storage Manager Module
+ * BlockForge - Storage Manager Module
  * 
  * Handles all data persistence using Chrome Storage API
  * - Settings storage

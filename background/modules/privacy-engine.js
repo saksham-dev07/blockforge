@@ -1,5 +1,5 @@
 /**
- * ShieldGuard - Privacy Engine Module
+ * BlockForge - Privacy Engine Module
  * 
  * Provides comprehensive privacy protection:
  * - Anti-fingerprinting injection

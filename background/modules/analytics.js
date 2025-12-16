@@ -1,5 +1,5 @@
 /**
- * ShieldGuard - Analytics Module
+ * BlockForge - Analytics Module
  * 
  * Tracks and reports blocking statistics:
  * - Total requests blocked
