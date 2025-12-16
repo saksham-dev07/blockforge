@@ -38,7 +38,7 @@
    */
   function addCanvasNoise(canvas) {
     try {
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
       if (!ctx || canvas.width === 0 || canvas.height === 0) return;
       
       const imageData = originalGetImageData.call(
